@@ -32,7 +32,6 @@ while True:
     numerical_frame = np.zeros((len(frame), 5))
     for i in range(len(frame)):
         numerical_frame[i] = list(map(float, frame[i].split('\n')[0].split('\t')))
-    # np.append(all_nframes, numerical_frame, axis=0)
     all_nframes.append(numerical_frame)
     step += header + no_atoms
     no_frames += 1
@@ -49,6 +48,7 @@ box_actor = actor.box(box_centers, box_directions, box_colors,
                       size=(box_lx, box_ly, box_lz),
                       heights=2, vertices=None, faces=None)
 box_actor.GetProperty().SetRepresentationToWireframe()
+box_actor.GetProperty().SetLineWidth(10)
 colors = np.random.rand(no_atoms, 3)
 radii = 0.1 * np.ones(no_atoms)
 
@@ -56,7 +56,7 @@ scene = window.Scene()
 
 sphere_actor = actor.sphere(centers=xyz,
                             colors=colors,
-                            radii=radii)
+                            radii=radii, theta=6, phi=6)
 
 scene.add(sphere_actor)
 scene.add(box_actor)
