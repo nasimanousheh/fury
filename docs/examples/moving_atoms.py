@@ -17,10 +17,8 @@ line_lz = list(map(float, lines[7].split('\n')[0].split('\t')))
 box_lx = (np.abs(line_lx[0])+np.abs(line_lx[1]))
 box_ly = (np.abs(line_ly[0])+np.abs(line_ly[1]))
 box_lz = (np.abs(line_lz[0])+np.abs(line_lz[1]))
-print(box_lz)
 header = 9
 step = 0
-
 no_frames = 0
 
 # all_nframes = np.empty((0, 6), dtype=np.float)
@@ -35,9 +33,9 @@ while True:
     all_nframes.append(numerical_frame)
     step += header + no_atoms
     no_frames += 1
+
     if step >= len(lines):
         break
-
 xyz = all_nframes[0][:, 2:5]
 
 scene = window.Scene()
@@ -49,7 +47,14 @@ box_actor = actor.box(box_centers, box_directions, box_colors,
                       heights=2, vertices=None, faces=None)
 box_actor.GetProperty().SetRepresentationToWireframe()
 box_actor.GetProperty().SetLineWidth(10)
-colors = np.random.rand(no_atoms, 3)
+atom_types = all_nframes[0][:, 1]
+
+
+print(atom_types)
+colors = np.ones((no_atoms, 3))
+colors[atom_types == 1] = np.array([1., 0, 0])
+colors[atom_types == -1] = np.array([0, 0, 1.])
+
 radii = 0.1 * np.ones(no_atoms)
 
 scene = window.Scene()
