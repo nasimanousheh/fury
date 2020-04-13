@@ -10,7 +10,14 @@ lammps_file = open('C:\\Users\\nasim\\Documents\\Python Scripts\\Practice\\propa
 lines = lammps_file.readlines()
 
 no_atoms = int(lines[3])
-print(no_atoms)
+line_lx = list(map(float, lines[5].split('\n')[0].split('\t')))
+line_ly = list(map(float, lines[6].split('\n')[0].split('\t')))
+line_lz = list(map(float, lines[7].split('\n')[0].split('\t')))
+
+box_lx = (np.abs(line_lx[0])+np.abs(line_lx[1]))
+box_ly = (np.abs(line_ly[0])+np.abs(line_ly[1]))
+box_lz = (np.abs(line_lz[0])+np.abs(line_lz[1]))
+print(box_lz)
 header = 9
 step = 0
 
@@ -22,7 +29,7 @@ all_nframes = []
 while True:
     frame = lines[header + step: header + step + no_atoms]
 
-    numerical_frame = np.zeros((len(frame), 6))
+    numerical_frame = np.zeros((len(frame), 5))
     for i in range(len(frame)):
         numerical_frame[i] = list(map(float, frame[i].split('\n')[0].split('\t')))
     # np.append(all_nframes, numerical_frame, axis=0)
@@ -34,6 +41,14 @@ while True:
 
 xyz = all_nframes[0][:, 2:5]
 
+scene = window.Scene()
+box_centers = np.array([[0, 0, 0.]])
+box_directions = np.array([[0, 1, 0]])
+box_colors = np.array([[1, 0, 0, 0.2]])
+box_actor = actor.box(box_centers, box_directions, box_colors,
+                      size=(box_lx, box_ly, box_lz),
+                      heights=2, vertices=None, faces=None)
+box_actor.GetProperty().SetRepresentationToWireframe()
 colors = np.random.rand(no_atoms, 3)
 radii = 0.1 * np.ones(no_atoms)
 
@@ -44,6 +59,7 @@ sphere_actor = actor.sphere(centers=xyz,
                             radii=radii)
 
 scene.add(sphere_actor)
+scene.add(box_actor)
 
 showm = window.ShowManager(scene,
                            size=(900, 768), reset_camera=False,
@@ -90,7 +106,7 @@ def timer_callback(_obj, _event):
 
     pos = all_nframes[cnt][:, 2:5]# .copy()
 
-    print(pos)
+    #print(pos)
 
     # all_vertices = np.array(numpy_support.vtk_to_numpy(
     #    sphere_actor.GetMapper().GetInput().GetPoints().GetData()))
